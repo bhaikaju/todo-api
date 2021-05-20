@@ -1,7 +1,8 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, InternalServerErrorException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { TodoEntity, TodoStatus } from "../Entity/todo.entity";
 import { Repository } from "typeorm";
+import { CreateTodoDto } from "../DTO/create-todo.dto";
 
 @Injectable()
 export class TodoService {
@@ -14,13 +15,19 @@ export class TodoService {
     return await this.repo.find();
   }
 
-  async createTodo(title: string, description: string){
+  async createTodo(createTodoDTO: CreateTodoDto){
     const todo = new TodoEntity();
+    const {title, description} = createTodoDTO;
     todo.title = title;
     todo.description = description;
     todo.status = TodoStatus.OPEN;
 
     this.repo.create(todo);
-    return await this.repo.save(todo);
+    try {
+      return await this.repo.save(todo);
+    } catch (err) {
+      throw new InternalServerErrorException('Something went wrong, todo not created');
+    }
+
   }
 }
