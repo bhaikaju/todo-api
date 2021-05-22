@@ -16,7 +16,6 @@ import { stat } from "fs";
 import { TodoStatusValidationPipe } from "../pipes/TodoStatusValidation.pipe";
 
 // http://localhost:3000/api/todos
-@UseInterceptors(ClassSerializerInterceptor)
 @Controller("todos")
 export class TodoController {
   constructor(private todoService: TodoService) {
